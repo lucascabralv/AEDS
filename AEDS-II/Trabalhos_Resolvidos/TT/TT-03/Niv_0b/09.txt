@@ -1,0 +1,1 @@
+O código imprime tais números, pois os sinais de << e >> deslocam os bits em uma casa.

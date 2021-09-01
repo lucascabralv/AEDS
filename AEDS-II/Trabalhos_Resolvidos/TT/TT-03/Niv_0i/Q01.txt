@@ -1,0 +1,10 @@
+01) Um estudante de Algoritimos e Estruturas de Dados... O que acontece
+se a classe X abaixo for colocada na mesma página da classe Hora?
+
+Resposta: (B) A comparação de igualdade entre h1 e h2 retorna falso, pois
+        não está comparando seus atributos e sim o endereço de memória.
+
+02)   I - V
+     II - V -> O comando imprime Gato, pois b e c apontam para o mesmo lugar;
+    III - F 
+     IV - F 

@@ -1,0 +1,6 @@
+A diferença entre as notações de complexidade O, Ω e 𝚯.
+"O" denota um limite superior.
+"Ω" denota um limite inferior.
+"𝚯" representa os O e Ω ao mesmo tempo. Ou seja, O = Ω = 𝚯 
+
+Resposta tiradas de https://homepages.dcc.ufmg.br/~cunha/teaching/20121/aeds2/complexity.pdf

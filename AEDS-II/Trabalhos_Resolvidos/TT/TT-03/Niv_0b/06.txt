@@ -1,0 +1,2 @@
+Minha opinião sobre o código é que está bem confuso de se entender,
+mesmo com as variáveis sendo bem explicadas, seu tamanho dificulta a leiura do código.

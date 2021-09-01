@@ -1,0 +1,1 @@
+O código verifica se a letra recebida pela função é uma vogal

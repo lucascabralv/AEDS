@@ -1,0 +1,7 @@
+O programa iterativo printa na tela:
+
+main - inicio
+1o - inicio
+2o - incio e fim
+1o - fim
+main - fim

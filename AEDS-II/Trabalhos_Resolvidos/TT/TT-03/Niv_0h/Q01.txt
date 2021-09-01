@@ -1,0 +1,4 @@
+A função imprime 2,1,0,0,1,2 porque em sua execução, primeiro printa o i, 
+depois chama recursivamente com o i-1 e por fim printa o i novamente. Dessa forma,
+primeiro ele printa em ordem descrescente, e depois que a recursão acaba, volta printando
+em ordem crescente.

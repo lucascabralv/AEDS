@@ -1,0 +1,11 @@
+Celula *tmp = novaCelula(3);
+
+Ao final do programa tmp apontará para o endereço de memória que *nova aponta.
+
+
+
+
+Confesso que esse tipo de slide que em tese foi feito para dar em sala de aula, possui tantos slides
+"inúteis", slides que so mostram a execução do código passo a passo, são interessantes se o arquivo
+fosse um powerpoint que veriamos essas transições, mas na real em formato pdf só o deixa extremamente
+longos (200 páginas) e fiquei meio perdido em achar os exercícios... acabei deixado esse Nivelamento de lado.
