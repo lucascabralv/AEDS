@@ -41,6 +41,10 @@ class Serie {
         this.episodes = episodes;
     }
 
+    public Serie(String arquivo) {
+        readClass(arquivo);
+    }
+
     // método para setar o atributo name
     public void setName(String name) {
         this.name = name;
@@ -146,11 +150,15 @@ class Serie {
         return resp;
     }
 
+    public String toString() {
+        String resp = this.name + " " + this.format + " " + this.duration + " " + this.country + " " + this.language
+                + " " + this.broadcaster + " " + this.streaming + " " + this.seasons + " " + this.episodes;
+        return resp;
+    }
+
     // método para printar a classe
     public void printClass() {
-        System.out
-                .println(this.name + " " + this.format + " " + this.duration + " " + this.country + " " + this.language
-                        + " " + this.broadcaster + " " + this.streaming + " " + this.seasons + " " + this.episodes);
+        System.out.println(this.toString().replaceAll("  ", " "));
     }
 
     // método para tratar a linha, deixar apenas números e converter o retorno de
@@ -193,6 +201,18 @@ class Serie {
         return resp;
     }
 
+    public String removeSpace(String line) {
+        String resp = "";
+        if (line.charAt(0) == ' ') {
+            for (int i = 1; i < line.length(); i++) {
+                resp += line.charAt(i);
+            }
+        } else {
+            resp = line;
+        }
+        return resp;
+    }
+
     // método para tratar o nome do arquivo e retornar o nome da série
     public String searchName(String fileName) {
         String resp = "";
@@ -210,8 +230,8 @@ class Serie {
 
     // método para leitura do arquivo .html e tratamento das linhas
     public void readClass(String fileName) {
-        //String file = "/Users/lucascabral/Desktop/series/" + fileName;
-        String file = "/tmp/series/" + fileName;
+        String file = "/Users/lucascabral/Desktop/series/" + fileName;
+        //String file = "/tmp/series/" + fileName;
         try {
             FileReader fileReader = new FileReader(file); // declaração da variável fileReader que será recebida pelo
                                                           // bufferedReader
@@ -234,12 +254,12 @@ class Serie {
             // set país da série
             while (!br.readLine().contains("País de origem"))
                 ;
-            this.country = removeTags(br.readLine());
+            this.country = removeSpace(removeTags(br.readLine()));
 
             // set idioma da série
             while (!br.readLine().contains("Idioma original"))
                 ;
-            this.language = removeTags(br.readLine());
+            this.language = removeSpace(removeTags(br.readLine()));
 
             // set emissora da série
             while (!br.readLine().contains("Emissora de televisão"))
@@ -274,8 +294,194 @@ class Serie {
     }
 }
 
+class Lista {
+    private Serie series[];
+    private int tamanho;
+    private int comparacoes;
+    private int movimentacoes;
 
-public class Q04 {
+    // Construtor da classe.
+    public Lista() {
+        this(100);
+    }
+
+    public Lista(int tam) {
+        series = new Serie[tam];
+        tamanho = 0;
+        comparacoes = 0;
+        movimentacoes = 0;
+    }
+
+    public int getComparacoes() {
+        return comparacoes;
+    }
+
+    public int getMovimentacoes() {
+        return movimentacoes;
+    }
+
+    /*
+     * Insere um elemento na primeira posicao da lista e move os demais elementos
+     * para o fim da lista.
+     */
+    public void inserirInicio(Serie x) throws Exception {
+        // validar insercao
+        if (tamanho >= series.length) {
+            throw new Exception("Erro ao inserir!");
+        }
+        // levar elementos para o fim do array
+        for (int i = tamanho; i > 0; i--) {
+            series[i] = series[i - 1].clone();
+        }
+        series[0] = x.clone();
+        tamanho++;
+    }
+
+    /*
+     * Insere um elemento na ultima posicao da lista.
+     */
+    public void inserirFim(Serie x) throws Exception {
+        // validar insercao
+        if (tamanho >= series.length) {
+            throw new Exception("Erro ao inserir!");
+        }
+        series[tamanho] = x.clone();
+        tamanho++;
+    }
+
+    /*
+     * Insere um elemento em uma posicao especifica e move os demais elementos para
+     * o fim da lista.
+     */
+    public void inserir(Serie x, int pos) throws Exception {
+        // validar insercao
+        if (tamanho >= series.length || pos < 0 || pos > tamanho) {
+            throw new Exception("Erro ao inserir!");
+        }
+        // levar elementos para o fim do array
+        for (int i = tamanho; i > pos; i--) {
+            series[i] = series[i - 1].clone();
+        }
+        series[pos] = x.clone();
+        tamanho++;
+    }
+
+    /*
+     * Remove um elemento da primeira posicao da lista e movimenta os demais
+     * elementos para o inicio da mesma.
+     */
+    public Serie removerInicio() throws Exception {
+        // validar remocao
+        if (tamanho == 0) {
+            throw new Exception("Erro ao remover!");
+        }
+        Serie resp = series[0].clone();
+        // MyIO.println("Serie removida: " + resp.getName() + " -> 0");
+        tamanho--;
+
+        for (int i = 0; i < tamanho; i++) {
+            series[i] = series[i + 1].clone();
+        }
+        return resp;
+    }
+
+    /**
+     * Remove um elemento da ultima posicao da lista.
+     */
+    public Serie removerFim() throws Exception {
+        // validar remocao
+        if (tamanho == 0) {
+            throw new Exception("Erro ao remover!");
+        }
+        // MyIO.println("Serie removida: " + series[tamanho].getName() + " -> " +
+        // tamanho);
+        return series[--tamanho];
+    }
+
+    /*
+     * Remove um elemento de uma posicao especifica da lista e movimenta os demais
+     * elementos para o inicio da mesma.
+     */
+    public Serie remover(int pos) throws Exception {
+        // validar remocao
+        if (tamanho == 0 || pos < 0 || pos >= tamanho) {
+            throw new Exception("Erro ao remover!");
+        }
+        Serie resp = series[pos].clone();
+        // MyIO.println("Serie removida: " + resp.getName() + " -> " + pos);
+        tamanho--;
+
+        for (int i = pos; i < tamanho; i++) {
+            series[i] = series[i + 1].clone();
+        }
+
+        return resp;
+    }
+
+    public void mostrar() {
+        for (int i = 0; i < tamanho; i++) {
+            //series[i].printClass();
+            MyIO.println(series[i].getCountry() + " --- " + series[i].getName());
+        }
+    }
+
+    public void swap(int i, int j) {
+        Serie temp = series[i].clone();
+        series[i] = series[j].clone();
+        series[j] = temp.clone();
+        movimentacoes += 3;
+    }
+    
+    public void sort(String tipo) {
+        quicksort(0, tamanho - 1, tipo);
+    }
+    
+    public void sort() {
+        quicksort(0, tamanho - 1, "Name");
+    }
+
+    private void quicksort(int esq, int dir, String tipo) {
+        int i = esq, j = dir;
+        Serie pivo = series[(dir + esq) / 2].clone();
+        
+        if(tipo == "Country"){
+            while (i <= j) {
+                while (series[i].getCountry().compareTo(pivo.getCountry()) < 0)
+                    i++;
+                while (series[j].getCountry().compareTo(pivo.getCountry()) > 0)
+                    j--;
+                if (i <= j) {
+                    swap(i, j);
+                    i++;
+                    j--;
+                }
+            }
+            if (esq < j)
+                quicksort(esq, j, "Country");
+            if (i < dir)
+                quicksort(i, dir, "Country");
+        } else {
+            while (i <= j) {
+                while (series[i].getName().compareTo(pivo.getName()) < 0)
+                    i++;
+                while (series[j].getName().compareTo(pivo.getName()) > 0)
+                    j--;
+                if (i <= j) {
+                    swap(i, j);
+                    i++;
+                    j--;
+                }
+            }
+            if (esq < j)
+                quicksort(esq, j, "Name");
+            if (i < dir)
+                quicksort(i, dir, "Name");
+        }
+    }
+
+} // END CLASSE LISTA
+
+public class Q06 {
     // Confere se a palavra é igual a FIM
     public static boolean isFim(String s) {
         boolean resp = false;
@@ -284,91 +490,41 @@ public class Q04 {
         }
         return resp;
     }
-    
-    public static void swap(int i, int j, Serie series[]) {
-        Serie temp = series[i].clone();
-        series[i] = series[j].clone();
-        series[j] = temp.clone();
-    }
-    // Ordenacao por Quicksort
-    public static void ordenar(Serie series[], int esq, int dir){
-        int i = esq, j = dir;
-        Serie pivo = series[(dir + esq) / 2].clone();
-        while (i <= j) {
-            while (series[i].getName().compareTo(pivo.getName()) < 0)
-                i++;
-            while (series[j].getName().compareTo(pivo.getName()) > 0)
-                j--;
-            if (i <= j) {
-                swap(i, j, series);
-                i++;
-                j--;
-            }
-        }
-        if (esq < j)
-            ordenar(series, esq, j);
-        if (i < dir)
-            ordenar(series, i, dir);
-    }
 
-    public static void ordenar(Serie series[], int tam){
-        ordenar(series, tam, 0);
-    }
-    //Pesquisa Binaria
-    public static boolean Pesquisa(String chave, Serie series[], int tam, int comparacoes[]) {
-        boolean resp = false;
-        int dir = tam - 1, esq = 0, meio;
-
-        while (esq <= dir) {
-            meio = (esq + dir) / 2;
-            if (chave.equals(series[meio].getName())) {
-                resp = true;
-                esq = tam;
-                comparacoes[0] += 1;
-            } else if (chave.compareTo(series[meio].getName()) > 0) {
-                esq = meio + 1;
-                comparacoes[0] += 2;
-            } else {
-                dir = meio - 1;
-                comparacoes[0] += 2;
-            }
-        }
-        return resp;
+    public static Serie criaSerie(String arquivo) {
+        Serie serie = new Serie(arquivo);
+        return serie;
     }
 
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
-        int ultimo_index = 0;
-        Serie series[] = new Serie[100];
-        String palavra = "";
-        int[] comparacoes = new int[1];
-        palavra = MyIO.readLine();
+        Lista lista = new Lista();
 
-        // Continua o loop até a palavra FIM ser achada
-        while (!(isFim(palavra))) {
-            // Cria serie no array de Series
-            series[ultimo_index] = new Serie();
-            // Executa o algoritmo de "Cadastro das series"
-            series[ultimo_index].readClass(palavra);
-            ultimo_index++;
-            palavra = MyIO.readLine();
-        }
-        long inicio = new Date().getTime();
+        String palavra = "";
         palavra = MyIO.readLine();
         // Continua o loop até a palavra FIM ser achada
-        ordenar(series, ultimo_index);
         while (!(isFim(palavra))) {
-            // Operacao ternaria para a Pesquisa Sequencial
-            String resp = Pesquisa(palavra, series, ultimo_index, comparacoes) ? "SIM" : "NÃO";
-            MyIO.println(resp);
+            Serie serie = new Serie(palavra);
+            try {
+                lista.inserirFim(serie);
+            } catch (Exception e) {
+            }
             palavra = MyIO.readLine();
         }
-        
+        // Start timer
+        long inicio = new Date().getTime();
+
+        lista.sort();
+        //lista.sort("Country");
+
+        // End timer
         long fim = new Date().getTime();
         double tempo = (fim - inicio) / 1000.0;
-        Arq.openWrite("728738_binaria.txt");
-        Arq.println("728738\t" + tempo + "\t" + comparacoes[0]);
+
+        Arq.openWrite("728738_quicksort.txt");
+        Arq.println("728738\t" + lista.getComparacoes() + "\t" + lista.getMovimentacoes() + "\t" + tempo);
         Arq.close();
 
+        lista.mostrar();
     }
 }
