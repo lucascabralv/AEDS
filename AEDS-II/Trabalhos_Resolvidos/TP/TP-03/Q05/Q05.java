@@ -158,7 +158,7 @@ class Serie {
 
     // método para printar a classe
     public void printClass() {
-        System.out.println(this.toString().replaceAll("  ", " "));
+        System.out.println(this.toString());
     }
 
     // método para tratar a linha, deixar apenas números e converter o retorno de
@@ -203,9 +203,13 @@ class Serie {
 
     public String removeSpace(String line) {
         String resp = "";
-        if (line.charAt(0) == ' ') {
-            for (int i = 1; i < line.length(); i++) {
-                resp += line.charAt(i);
+        if (line.charAt(0) == ' ' || line.charAt(line.length() - 1) == ' ') {
+            for (int i = 0; i < line.length(); i++) {
+                if ((i == 0 || i == (line.length() - 1)) && line.charAt(i) == ' ') {
+                    // Não adiciona
+                } else {
+                    resp += line.charAt(i);
+                }
             }
         } else {
             resp = line;
@@ -230,8 +234,15 @@ class Serie {
 
     // método para leitura do arquivo .html e tratamento das linhas
     public void readClass(String fileName) {
-        String file = "/Users/lucascabral/Desktop/series/" + fileName;
-        //String file = "/tmp/series/" + fileName;
+        /** Series no Mac */
+        // String file = "/Users/lucascabral/Desktop/series/" + fileName;
+
+        /** Series no WSL */
+        //String file = "/mnt/c/Users/cabral/Documents/Github/AEDS/AEDS-II/series/" + fileName;
+
+        /** Series no Verde */
+        String file = "/tmp/series/" + fileName;
+
         try {
             FileReader fileReader = new FileReader(file); // declaração da variável fileReader que será recebida pelo
                                                           // bufferedReader
@@ -420,8 +431,8 @@ class Lista {
 
     public void mostrar() {
         for (int i = 0; i < tamanho; i++) {
-            //series[i].printClass();
-            MyIO.println(series[i].getFormat() + " ---- " + series[i].getName());
+            series[i].printClass();
+            //MyIO.println(series[i].getFormat() + " --- " + series[i].getName());
         }
     }
 
@@ -432,72 +443,46 @@ class Lista {
         series[j] = temp.clone();
         movimentacoes += 3;
     }
-
-
-    public void HeapsortAlfa() {
-        // Alterar o vetor ignorando a posicao zero
-        Serie[] tmp = new Serie[tamanho + 1];
-        for (int i = 0; i < tamanho; i++) {
-            tmp[i + 1] = series[i].clone();
-            movimentacoes++;
-        }
-        series = tmp;
-
-        // Contrucao do heap
-        for (int tamHeap = 2; tamHeap <= tamanho; tamHeap++) {
-            construirAlfa(tamHeap);
-        }
-        // Ordenacao propriamente dita
-        int tamHeap = tamanho;
-        while (tamHeap > 1) {
-            swap(1, tamHeap--);
-            reconstruirAlfa(tamHeap);
-        }
-        // Alterar o vetor para voltar a posicao zero
-        tmp = series;
-        series = new Serie[tamanho];
-        for (int i = 0; i < tamanho; i++) {
-            series[i] = tmp[i + 1];
-            movimentacoes++;
-        }
+    
+    // Encapsulamento de ordenar
+    public void ordenar() {
+        ordenar(0);
     }
 
-    /*
-     * > < >
-     */
-
-    public void construirAlfa(int tamHeap) {
-        for (int i = tamHeap; i > 1 && (series[i].getName().compareTo(series[i / 2].getName()) > 0); i /= 2) {
-            swap(i, i / 2);
+    // Ordena internamente cada grupo com Format igual
+    private void ordenar(int inicio) {
+        int i = inicio + 1;
+        while (i < tamanho && series[inicio].getFormat().equals(series[i].getFormat())) {
+            i++;
+        }
+        i--;
+        if (i < tamanho) {
+            quicksortName(inicio, i);
+            ordenar(i + 1);
         }
     }
-
-    public void reconstruirAlfa(int tamHeap) {
-        int i = 1;
-        while (i <= (tamHeap / 2)) {
-            int filho = getMaiorFilhoAlfa(i, tamHeap);
-            comparacoes++;
-            if (series[i].getName().compareTo(series[filho].getName()) < 0) {
-                swap(i, filho);
-                i = filho;
-            } else {
-                i = tamHeap;
+    
+    // Quicksort utilizando o atributo Name
+    private void quicksortName(int esq, int dir) {
+        int i = esq, j = dir;
+        Serie pivo = series[(dir + esq) / 2].clone();
+        while (i <= j) {
+            while (series[i].getName().compareTo(pivo.getName()) < 0)
+                i++;
+            while (series[j].getName().compareTo(pivo.getName()) > 0)
+                j--;
+            if (i <= j) {
+                swap(i, j);
+                movimentacoes -= 3; // Para observar apenas o custo do Quicksort utilizando o atributo Country
+                i++;
+                j--;
             }
         }
+        if (esq < j)
+            quicksortName(esq, j);
+        if (i < dir)
+            quicksortName(i, dir);
     }
-
-    public int getMaiorFilhoAlfa(int i, int tamHeap) {
-        int filho;
-        comparacoes++;
-        if (2 * i == tamHeap || series[2 * i].getName().compareTo(series[2 * i + 1].getName()) > 0) {
-            filho = 2 * i;
-        } else {
-            filho = 2 * i + 1;
-        }
-        return filho;
-    }
-
-
 
     //ORDENACAO NORMAL
     public void Heapsort() {
@@ -597,8 +582,6 @@ public class Q05 {
         }
         // Start timer
         long inicio = new Date().getTime();
-       
-        lista.HeapsortAlfa();
 
         lista.Heapsort();
 
@@ -609,6 +592,7 @@ public class Q05 {
         Arq.println("728738\t" + lista.getComparacoes() + "\t" + lista.getMovimentacoes() + "\t" + tempo);
         Arq.close();
 
+        lista.ordenar();
         lista.mostrar();
     }
 }

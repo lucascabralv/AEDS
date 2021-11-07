@@ -201,17 +201,22 @@ class Serie {
         return resp;
     }
 
-    public String removeSpace(String line){
+    public String removeSpace(String line) {
         String resp = "";
-        if(line.charAt(0) == ' '){
-            for(int i = 1; i < line.length(); i++){
-                resp += line.charAt(i);
+        if (line.charAt(0) == ' ' || line.charAt(line.length() - 1) == ' ') {
+            for (int i = 0; i < line.length(); i++) {
+                if ((i == 0 || i == (line.length() - 1)) && line.charAt(i) == ' ') {
+                    // Não adiciona
+                } else {
+                    resp += line.charAt(i);
+                }
             }
         } else {
             resp = line;
         }
         return resp;
     }
+    
     // método para tratar o nome do arquivo e retornar o nome da série
     public String searchName(String fileName) {
         String resp = "";
